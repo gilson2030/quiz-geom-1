@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz • Relações Métricas no Triângulo Retângulo</title>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
+
+    :root{
+      --bg: #081120;
+      --bg-soft: #0b1730;
+      --card: rgba(255,255,255,0.06);
+      --card-strong: rgba(255,255,255,0.08);
+      --line: rgba(255,255,255,0.10);
+      --text: #eef4ff;
+      --muted: rgba(238,244,255,0.72);
+      --primary: #7c3aed;
+      --secondary: #f59e0b;
+      --accent: #ff9f1a;
+      --shadow: 0 20px 60px rgba(0,0,0,.38);
+    }
+
+    body.light{
+      --bg: #eef3fb;
+      --bg-soft: #dbe6f8;
+      --card: rgba(255,255,255,0.86);
+      --card-strong: rgba(255,255,255,0.96);
+      --line: rgba(15,23,42,0.10);
+      --text: #10203a;
+      --muted: rgba(16,32,58,0.72);
+      --primary: #7c3aed;
+      --secondary: #f59e0b;
+      --accent: #d97706;
+      --shadow: 0 18px 40px rgba(31,41,55,.14);
+    }
+
+    *{box-sizing:border-box}
+
+    html,body{
+      margin:0;
+      min-height:100%;
+      font-family:"Montserrat",system-ui,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 8% 10%, rgba(124,58,237,.26), transparent 60%),
+        radial-gradient(800px 420px at 92% 8%, rgba(245,158,11,.18), transparent 60%),
+        linear-gradient(180deg, #2b0f4d 0%, #0b1630 52%, #062437 100%);
+    }
+
+    body.light{
+      background:
+        radial-gradient(900px 500px at 8% 10%, rgba(124,58,237,.14), transparent 60%),
+        radial-gradient(800px 420px at 92% 8%, rgba(245,158,11,.12), transparent 60%),
+        linear-gradient(180deg, #eef3fb 0%, #dde8f8 100%);
+    }
+
+    body{
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding:26px;
+      transition:background .25s ease,color .25s ease;
+    }
+
+    .themeBtn{
+      position:fixed;
+      top:18px;
+      right:18px;
+      z-index:100;
+      width:46px;
+      height:46px;
+      border:none;
+      border-radius:16px;
+      background:var(--card-strong);
+      color:var(--text);
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      cursor:pointer;
+      font-size:20px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      backdrop-filter: blur(8px);
+      transition:.2s ease;
+    }
+
+    .themeBtn:hover{ transform:translateY(-2px); }
+
+    .wrap{ width:min(980px,100%); }
+
+    .app{
+      width:100%;
+      border-radius:30px;
+      overflow:hidden;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(10px);
+    }
+
+    .top{
+      padding:18px 22px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(90deg, rgba(124,58,237,.14), rgba(245,158,11,.08));
+      flex-wrap:wrap;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+
+    .logo{
+      width:36px;
+      height:36px;
+      border-radius:12px;
+      background:linear-gradient(135deg,var(--primary),var(--secondary));
+      box-shadow:0 10px 24px rgba(124,58,237,.25);
+      flex-shrink:0;
+    }
+
+    .title h1{
+      margin:0;
+      font-size:18px;
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+
+    .title p{
+      margin:4px 0 0;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:700;
+    }
+
+    .qtotal{
+      font-weight:900;
+      color:var(--secondary);
+      font-size:15px;
+      white-space:nowrap;
+    }
+
+    .meta{
+      padding:14px 22px 18px;
+      border-bottom:1px solid var(--line);
+      background:rgba(255,255,255,.02);
+    }
+
+    .metaRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+      font-size:13px;
+      font-weight:800;
+      color:var(--muted);
+    }
+
+    .userInfo{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    .pill{
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .bar{
+      width:100%;
+      height:10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      overflow:hidden;
+    }
+
+    .bar > div{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,var(--secondary),#c084fc);
+      transition:width .35s ease;
+      border-radius:999px;
+    }
+
+    .screen{
+      min-height:640px;
+      padding:26px;
+      background:linear-gradient(180deg,#0a1034 0%, #091232 100%);
+    }
+
+    body.light .screen{
+      background:linear-gradient(180deg,#f8fbff 0%, #eef4fb 100%);
+    }
+
+    .introScreen{
+      background:
+        radial-gradient(700px 300px at 15% 10%, rgba(59,130,246,.16), transparent 60%),
+        radial-gradient(550px 250px at 85% 18%, rgba(245,158,11,.12), transparent 60%),
+        linear-gradient(135deg, rgba(124,58,237,.12), rgba(245,158,11,.08));
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns:1.15fr .85fr;
+      gap:20px;
+      margin-bottom:22px;
+    }
+
+    .heroCard,.sideCard,.mainCard,.panel,.qCard,.errorCard{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:24px;
+      backdrop-filter:blur(8px);
+    }
+
+    .heroCard{ padding:24px; }
+
+    .badgeTop{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 14px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      color:var(--secondary);
+      font-size:12px;
+      font-weight:900;
+      margin-bottom:16px;
+    }
+
+    .heroTitle{
+      margin:0 0 10px;
+      font-size:36px;
+      line-height:1.08;
+      font-weight:900;
+    }
+
+    .heroText{
+      margin:0;
+      color:var(--muted);
+      line-height:1.7;
+      font-size:14px;
+      font-weight:600;
+      max-width:680px;
+    }
+
+    .heroStats{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+      margin-top:20px;
+    }
+
+    .stat{
+      padding:16px;
+      border-radius:18px;
+      background:rgba(255,255,255,.05);
+      border:1px solid var(--line);
+    }
+
+    .stat strong{
+      display:block;
+      font-size:22px;
+      font-weight:900;
+      color:var(--secondary);
+      margin-bottom:5px;
+    }
+
+    .stat span{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:700;
+    }
+
+    .sideCards{
+      display:grid;
+      gap:14px;
+    }
+
+    .sideCard{ padding:16px; }
+
+    .sideHead{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+    }
+
+    .iconBox{
+      width:40px;
+      height:40px;
+      border-radius:14px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:18px;
+      background:rgba(245,158,11,.12);
+      border:1px solid rgba(245,158,11,.30);
+      flex-shrink:0;
+      color:var(--accent);
+      font-weight:900;
+    }
+
+    .sideCard h3{
+      margin:0;
+      font-size:15px;
+      font-weight:900;
+    }
+
+    .sideCard p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.6;
+      font-size:13px;
+      font-weight:600;
+    }
+
+    .mainCard{
+      padding:22px;
+      margin-top:10px;
+    }
+
+    .titleMain{
+      margin:0 0 8px;
+      font-size:28px;
+      font-weight:900;
+    }
+
+    .subMain{
+      margin:0 0 20px;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.6;
+      font-weight:600;
+    }
+
+    .formGrid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+      margin-bottom:18px;
+    }
+
+    .field label{
+      display:block;
+      margin:0 0 8px 4px;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:900;
+    }
+
+    .field input{
+      width:100%;
+      height:54px;
+      padding:0 16px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      outline:none;
+      font-family:inherit;
+      font-size:14px;
+      font-weight:700;
+      transition:.2s ease;
+    }
+
+    .field input:focus{
+      border-color:rgba(124,58,237,.65);
+      box-shadow:0 0 0 4px rgba(124,58,237,.12);
+    }
+
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin:12px 0 22px;
+    }
+
+    .chip{
+      padding:9px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .playRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    .playHint{
+      color:var(--muted);
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .qCard{ padding:24px; }
+
+    .qTop{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:900;
+    }
+
+    .qTag{
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--secondary);
+    }
+
+    .question{
+      margin:12px 0 18px;
+      font-size:24px;
+      line-height:1.45;
+      font-weight:900;
+      color:var(--text);
+      white-space:pre-line;
+    }
+
+    .helper{
+      margin-bottom:14px;
+      color:var(--muted);
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .options{
+      display:grid;
+      gap:13px;
+    }
+
+    .option{
+      width:100%;
+      display:flex;
+      align-items:center;
+      gap:14px;
+      text-align:left;
+      padding:15px;
+      border:none;
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--line);
+      color:var(--text);
+      cursor:pointer;
+      font-family:inherit;
+      transition:.2s ease;
+    }
+
+    .option:hover{
+      transform:translateY(-1px);
+      border-color:rgba(124,58,237,.55);
+      background:rgba(124,58,237,.08);
+    }
+
+    .option.selected{
+      border-color:rgba(124,58,237,.90);
+      background:rgba(124,58,237,.18);
+      box-shadow:0 0 0 3px rgba(124,58,237,.10);
+    }
+
+    .letter{
+      width:34px;
+      height:34px;
+      min-width:34px;
+      border-radius:12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:900;
+      background:rgba(245,158,11,.14);
+      color:var(--accent);
+      border:1px solid rgba(245,158,11,.34);
+      font-size:15px;
+    }
+
+    .optionText{
+      font-size:15px;
+      line-height:1.5;
+      font-weight:800;
+      white-space:pre-line;
+    }
+
+    .actions{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:20px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      border:none;
+      outline:none;
+      cursor:pointer;
+      padding:15px 24px;
+      border-radius:18px;
+      font-family:inherit;
+      font-size:15px;
+      font-weight:900;
+      transition:.2s ease;
+    }
+
+    .btn:hover{ transform:translateY(-1px); }
+
+    .btnPrimary{
+      color:#fff;
+      background:linear-gradient(135deg,var(--secondary),var(--primary));
+      box-shadow:0 14px 30px rgba(124,58,237,.26);
+    }
+
+    .btnGhost{
+      color:var(--text);
+      background:rgba(255,255,255,.05);
+      border:1px solid var(--line);
+    }
+
+    .btn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      transform:none;
+    }
+
+    .alert{
+      margin-bottom:16px;
+      padding:13px 15px;
+      border-radius:16px;
+      font-size:14px;
+      font-weight:900;
+      border:1px solid rgba(245,158,11,.34);
+      background:rgba(245,158,11,.12);
+      color:var(--secondary);
+    }
+
+    .resultGrid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+    }
+
+    .panel{ padding:18px; }
+
+    .panel h2{
+      margin:0 0 10px;
+      font-size:20px;
+      font-weight:900;
+    }
+
+    .score{
+      font-size:40px;
+      font-weight:900;
+      color:var(--secondary);
+      margin:8px 0 10px;
+    }
+
+    .muted{
+      color:var(--muted);
+      line-height:1.7;
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .summaryGrid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:12px;
+      margin-top:16px;
+    }
+
+    .summaryItem{
+      padding:14px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+    }
+
+    .summaryItem strong{
+      display:block;
+      font-size:22px;
+      font-weight:900;
+      color:var(--text);
+      margin-bottom:4px;
+    }
+
+    .summaryItem span{
+      color:var(--muted);
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .rankTitle{
+      margin:18px 0 10px;
+      font-size:14px;
+      font-weight:900;
+      color:var(--text);
+    }
+
+    .rankList{
+      list-style:none;
+      padding:0;
+      margin:0;
+      display:grid;
+      gap:8px;
+    }
+
+    .rankList li{
+      padding:11px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      font-size:12px;
+      font-weight:800;
+      color:var(--muted);
+    }
+
+    .rankList strong{ color:var(--secondary); }
+
+    .errorsSection{
+      margin-top:20px;
+      display:grid;
+      gap:14px;
+    }
+
+    .errorCard{ padding:18px; }
+
+    .errorCard h3{
+      margin:0 0 10px;
+      font-size:16px;
+      font-weight:900;
+      color:var(--secondary);
+    }
+
+    .errorQuestion{
+      font-size:14px;
+      line-height:1.7;
+      font-weight:800;
+      color:var(--text);
+      margin-bottom:12px;
+      white-space:pre-line;
+    }
+
+    .errorInfo{
+      display:grid;
+      gap:8px;
+    }
+
+    .errorLine{
+      padding:10px 12px;
+      border-radius:14px;
+      font-size:13px;
+      font-weight:800;
+      line-height:1.6;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+    }
+
+    .errorUser{
+      border-color:rgba(239,68,68,.35);
+      background:rgba(239,68,68,.10);
+      color:#ffd2d2;
+    }
+
+    .errorCorrect{
+      border-color:rgba(34,197,94,.35);
+      background:rgba(34,197,94,.10);
+      color:#d4ffe0;
+    }
+
+    body.light .errorUser{ color:#991b1b; }
+    body.light .errorCorrect{ color:#166534; }
+
+    .footer{
+      margin-top:18px;
+      padding-top:14px;
+      border-top:1px solid var(--line);
+      text-align:center;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:800;
+    }
+
+    @media (max-width:980px){
+      .hero,.resultGrid{ grid-template-columns:1fr; }
+    }
+
+    @media (max-width:860px){
+      .formGrid,.heroStats,.summaryGrid{ grid-template-columns:1fr; }
+      .question{ font-size:22px; }
+    }
+
+    @media (max-width:560px){
+      body{ padding:12px; }
+      .screen{ padding:18px; }
+      .top,.meta{ padding-left:16px; padding-right:16px; }
+      .heroTitle{ font-size:28px; }
+      .actions,.playRow{
+        flex-direction:column;
+        align-items:stretch;
+      }
+      .actions .btn,.playRow .btn{ width:100%; }
+      .question{ font-size:20px; }
+    }
+  </style>
+</head>
+<body>
+  <button class="themeBtn" id="themeBtn" title="Alternar tema">🌙</button>
+
+  <div class="wrap">
+    <div class="app">
+      <div class="top">
+        <div class="brand">
+          <div class="logo"></div>
+          <div class="title">
+            <h1>Quiz • Relações Métricas</h1>
+            <p>Triângulo retângulo • hipotenusa • altura • projeções</p>
+          </div>
+        </div>
+        <div class="qtotal"><span id="totalQuestions">10</span> questões</div>
+      </div>
+
+      <div class="meta">
+        <div class="metaRow">
+          <div class="userInfo" id="userInfo"></div>
+          <div id="progressText">0 / 10</div>
+        </div>
+        <div class="bar">
+          <div id="progressBar"></div>
+        </div>
+      </div>
+
+      <div class="screen introScreen" id="screen"></div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        tag: "Cateto e projeção",
+        q: "Em um triângulo retângulo, a hipotenusa mede 13 e a projeção de um cateto sobre a hipotenusa mede 4. Qual é a medida desse cateto?",
+        options: ["6", "2√13", "√52", "9"],
+        answer: 2
+      },
+      {
+        tag: "Altura relativa",
+        q: "Em um triângulo retângulo, a hipotenusa foi dividida pela altura em dois segmentos de medidas 9 e 16. Qual é a medida da altura relativa à hipotenusa?",
+        options: ["12", "13", "7", "25"],
+        answer: 0
+      },
+      {
+        tag: "Altura pela área",
+        q: "Em um triângulo retângulo, os catetos medem 9 e 12, e a hipotenusa mede 15. Qual é a altura relativa à hipotenusa?",
+        options: ["6,2", "7,2", "8", "9"],
+        answer: 1
+      },
+      {
+        tag: "Cateto e projeção",
+        q: "Em um triângulo retângulo, a hipotenusa mede 25 e a projeção de um dos catetos sobre ela mede 9. Qual é a medida desse cateto?",
+        options: ["12", "15", "18", "20"],
+        answer: 1
+      },
+      {
+        tag: "Altura e projeções",
+        q: "A altura relativa à hipotenusa de um triângulo retângulo mede 6. Sabendo que uma das projeções na hipotenusa mede 4, qual é a outra projeção?",
+        options: ["8", "9", "10", "12"],
+        answer: 1
+      },
+      {
+        tag: "Maior cateto",
+        q: "Em um triângulo retângulo, a hipotenusa mede 20 e as projeções dos catetos sobre ela medem 5 e 15. Qual é a medida do maior cateto?",
+        options: ["10", "10√2", "5√15", "15√2"],
+        answer: 2
+      },
+      {
+        tag: "Teorema de Pitágoras",
+        q: "Os catetos de um triângulo retângulo medem 8 e 15. Qual é a medida da hipotenusa?",
+        options: ["16", "17", "18", "19"],
+        answer: 1
+      },
+      {
+        tag: "Projeção do cateto",
+        q: "Em um triângulo retângulo, a hipotenusa mede 10 e um dos catetos mede 2√10. Qual é a projeção desse cateto sobre a hipotenusa?",
+        options: ["2", "4", "5", "8"],
+        answer: 1
+      },
+      {
+        tag: "Altura e projeção",
+        q: "Em um triângulo retângulo, a altura relativa à hipotenusa mede 15 e uma projeção mede 9. Qual é a medida da outra projeção?",
+        options: ["20", "25", "30", "36"],
+        answer: 1
+      },
+      {
+        tag: "Hipotenusa",
+        q: "Em um triângulo retângulo, os segmentos determinados pela altura sobre a hipotenusa medem 1 e 49. Qual é a medida da hipotenusa?",
+        options: ["48", "49", "50", "51"],
+        answer: 2
+      }
+    ];
+
+    const letters = ["A", "B", "C", "D"];
+    const screen = document.getElementById("screen");
+    const progressBar = document.getElementById("progressBar");
+    const progressText = document.getElementById("progressText");
+    const userInfo = document.getElementById("userInfo");
+    const themeBtn = document.getElementById("themeBtn");
+    const totalQuestions = document.getElementById("totalQuestions");
+
+    totalQuestions.textContent = questions.length;
+
+    let current = 0;
+    let answers = Array(questions.length).fill(null);
+    let profile = { aluno:"", professor:"", disciplina:"" };
+    let stage = "intro";
+    let chart = null;
+
+    const RANK_KEY = "quiz_relacoes_metricas_rank_v1";
+    const THEME_KEY = "quiz_relacoes_metricas_theme_v1";
+
+    function esc(str){
+      return String(str || "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function setTheme(mode){
+      document.body.classList.toggle("light", mode === "light");
+      themeBtn.textContent = mode === "light" ? "☀️" : "🌙";
+      localStorage.setItem(THEME_KEY, mode);
+    }
+
+    function toggleTheme(){
+      const currentTheme = localStorage.getItem(THEME_KEY) || "dark";
+      setTheme(currentTheme === "dark" ? "light" : "dark");
+      if(stage === "result") renderResult();
+      if(stage === "quiz") renderQuestion();
+      if(stage === "intro") renderIntro();
+    }
+
+    themeBtn.addEventListener("click", toggleTheme);
+    setTheme(localStorage.getItem(THEME_KEY) || "dark");
+
+    function answeredCount(){
+      return answers.filter(a => a !== null).length;
+    }
+
+    function updateHeader(){
+      let progressValue = 0;
+      if(stage === "intro") progressValue = 0;
+      else if(stage === "quiz") progressValue = answeredCount();
+      else if(stage === "result") progressValue = questions.length;
+
+      progressText.textContent = `${progressValue} / ${questions.length}`;
+      progressBar.style.width = `${(progressValue / questions.length) * 100}%`;
+
+      if(profile.aluno || profile.professor || profile.disciplina){
+        userInfo.innerHTML = `
+          <span class="pill">Aluno: ${esc(profile.aluno || "—")}</span>
+          <span class="pill">Prof.: ${esc(profile.professor || "—")}</span>
+          <span class="pill">Disc.: ${esc(profile.disciplina || "—")}</span>
+        `;
+      } else {
+        userInfo.innerHTML = `
+          <span class="pill">Aluno: —</span>
+          <span class="pill">Prof.: —</span>
+          <span class="pill">Disc.: —</span>
+        `;
+      }
+    }
+
+    function renderIntro(msg = ""){
+      stage = "intro";
+      updateHeader();
+      screen.className = "screen introScreen";
+
+      screen.innerHTML = `
+        ${msg ? `<div class="alert">⚠️ ${esc(msg)}</div>` : ""}
+
+        <div class="hero">
+          <div class="heroCard">
+            <div class="badgeTop">📐 Modo Relações Métricas</div>
+            <h2 class="heroTitle">Desafio de Relações Métricas no Triângulo Retângulo</h2>
+            <p class="heroText">
+              Resolva 10 questões sobre hipotenusa, catetos, altura relativa à hipotenusa,
+              projeções e aplicação das relações métricas no triângulo retângulo.
+            </p>
+
+            <div class="heroStats">
+              <div class="stat">
+                <strong>${questions.length}</strong>
+                <span>Questões</span>
+              </div>
+              <div class="stat">
+                <strong>4</strong>
+                <span>Alternativas</span>
+              </div>
+              <div class="stat">
+                <strong>1</strong>
+                <span>Correta por questão</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sideCards">
+            <div class="sideCard">
+              <div class="sideHead">
+                <div class="iconBox">h</div>
+                <h3>Altura e projeções</h3>
+              </div>
+              <p>Questões envolvendo a altura relativa à hipotenusa e os segmentos que ela determina.</p>
+            </div>
+
+            <div class="sideCard">
+              <div class="sideHead">
+                <div class="iconBox">c²</div>
+                <h3>Catetos e hipotenusa</h3>
+              </div>
+              <p>Aplicação das fórmulas métricas e do teorema de Pitágoras em situações variadas.</p>
+            </div>
+
+            <div class="sideCard">
+              <div class="sideHead">
+                <div class="iconBox">✅</div>
+                <h3>Correção final</h3>
+              </div>
+              <p>No final, o aluno verá as questões erradas e a alternativa correta.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mainCard">
+          <h2 class="titleMain">Identificação do aluno</h2>
+          <p class="subMain">Preencha os dados abaixo para iniciar o quiz.</p>
+
+          <div class="formGrid">
+            <div class="field">
+              <label>Nome do aluno</label>
+              <input id="aluno" placeholder="Ex.: Ana Souza" value="${esc(profile.aluno)}" />
+            </div>
+            <div class="field">
+              <label>Professor</label>
+              <input id="professor" placeholder="Ex.: Prof. Gilson" value="${esc(profile.professor)}" />
+            </div>
+            <div class="field">
+              <label>Disciplina</label>
+              <input id="disciplina" placeholder="Ex.: Matemática" value="${esc(profile.disciplina)}" />
+            </div>
+          </div>
+
+          <div class="chips">
+            <span class="chip">Relações métricas</span>
+            <span class="chip">Triângulo retângulo</span>
+            <span class="chip">Hipotenusa</span>
+            <span class="chip">Projeções</span>
+          </div>
+
+          <div class="playRow">
+            <div class="playHint">Clique em <b>Iniciar quiz</b> para começar.</div>
+            <button class="btn btnPrimary" onclick="startQuiz()">Iniciar quiz</button>
+          </div>
+        </div>
+
+        <div class="footer">© 2026 • Quiz criado pelo professor Gilson — Relações Métricas.</div>
+      `;
+    }
+
+    function startQuiz(){
+      const aluno = (document.getElementById("aluno")?.value || "").trim();
+      const professor = (document.getElementById("professor")?.value || "").trim();
+      const disciplina = (document.getElementById("disciplina")?.value || "").trim();
+
+      profile = { aluno, professor, disciplina };
+
+      if(!aluno || !professor || !disciplina){
+        renderIntro("Preencha todos os campos para iniciar o quiz.");
+        return;
+      }
+
+      current = 0;
+      answers = Array(questions.length).fill(null);
+      renderQuestion();
+    }
+
+    function renderQuestion(msg = ""){
+      stage = "quiz";
+      updateHeader();
+      screen.className = "screen";
+
+      const q = questions[current];
+      const selected = answers[current];
+
+      screen.innerHTML = `
+        ${msg ? `<div class="alert">⚠️ ${esc(msg)}</div>` : ""}
+
+        <div class="qCard">
+          <div class="qTop">
+            <span class="qTag">Questão ${current + 1} • ${esc(q.tag)}</span>
+            <span>${current + 1}/${questions.length}</span>
+          </div>
+
+          <div class="question">${esc(q.q)}</div>
+          <div class="helper">Selecione uma alternativa</div>
+
+          <div class="options">
+            ${q.options.map((opt, i) => `
+              <button class="option ${selected === i ? "selected" : ""}" onclick="pick(${i})">
+                <span class="letter">${letters[i]}</span>
+                <span class="optionText">${esc(opt)}</span>
+              </button>
+            `).join("")}
+          </div>
+
+          <div class="actions">
+            <button class="btn btnGhost" onclick="back()" ${current === 0 ? "disabled" : ""}>Voltar</button>
+            <button class="btn btnPrimary" onclick="nextQuestion()">Confirmar resposta</button>
+          </div>
+        </div>
+
+        <div class="footer">© 2026 • Quiz criado pelo professor Gilson — Relações Métricas.</div>
+      `;
+    }
+
+    function pick(index){
+      answers[current] = index;
+      renderQuestion();
+    }
+
+    function back(){
+      if(current > 0){
+        current--;
+        renderQuestion();
+      }
+    }
+
+    function nextQuestion(){
+      if(answers[current] === null){
+        renderQuestion("Responda a questão antes de avançar.");
+        return;
+      }
+
+      if(current < questions.length - 1){
+        current++;
+        renderQuestion();
+      } else {
+        renderResult();
+      }
+    }
+
+    function getScore(){
+      return answers.reduce((total, ans, i) => total + (ans === questions[i].answer ? 1 : 0), 0);
+    }
+
+    function getPercent(score){
+      return Math.round((score / questions.length) * 100);
+    }
+
+    function getPerformanceMessage(score){
+      const percent = getPercent(score);
+      if(percent === 100) return "Desempenho perfeito! Excelente domínio das relações métricas. 🏆";
+      if(percent >= 80) return "Ótimo desempenho! Você demonstrou muito domínio do conteúdo. 🎉";
+      if(percent >= 60) return "Bom trabalho! Continue praticando para evoluir ainda mais. 💪";
+      if(percent >= 40) return "Você está no caminho certo, mas ainda vale reforçar alguns conceitos. 📘";
+      return "Continue estudando e tente novamente. A prática vai melhorar seu resultado. 🚀";
+    }
+
+    function saveRanking(score){
+      const item = {
+        aluno: profile.aluno,
+        professor: profile.professor,
+        score,
+        total: questions.length,
+        percent: getPercent(score),
+        date: new Date().toLocaleString("pt-BR")
+      };
+
+      let rank = JSON.parse(localStorage.getItem(RANK_KEY) || "[]");
+      rank.push(item);
+      rank.sort((a,b) => {
+        if(b.score !== a.score) return b.score - a.score;
+        return b.percent - a.percent;
+      });
+      rank = rank.slice(0, 10);
+      localStorage.setItem(RANK_KEY, JSON.stringify(rank));
+    }
+
+    function renderRanking(){
+      const rank = JSON.parse(localStorage.getItem(RANK_KEY) || "[]");
+      const rankList = document.getElementById("rankList");
+      if(!rankList) return;
+
+      if(rank.length === 0){
+        rankList.innerHTML = `<li><span>Nenhum resultado salvo ainda.</span><span>—</span></li>`;
+        return;
+      }
+
+      rankList.innerHTML = rank.map((item, index) => `
+        <li>
+          <span><strong>${index + 1}º</strong> ${esc(item.aluno)}</span>
+          <span>${item.score}/${item.total}</span>
+        </li>
+      `).join("");
+    }
+
+    function renderChart(correct, wrong){
+      const chartEl = document.getElementById("chart");
+      if(!chartEl || typeof ApexCharts === "undefined") return;
+
+      if(chart){
+        chart.destroy();
+        chart = null;
+      }
+
+      chart = new ApexCharts(chartEl, {
+        chart: {
+          type: "pie",
+          height: 320,
+          fontFamily: "Montserrat, Arial, sans-serif",
+          toolbar: { show:false }
+        },
+        series: [correct, wrong],
+        labels: ["Acertos", "Erros"],
+        colors: ["#7c3aed", "#f59e0b"],
+        legend: {
+          position: "bottom",
+          labels: {
+            colors: document.body.classList.contains("light") ? "#10203a" : "#eef4ff"
+          }
+        },
+        dataLabels: {
+          enabled: true,
+          style: { fontSize: "14px", fontWeight: 800 },
+          formatter: (val, opts) => `${opts.w.globals.labels[opts.seriesIndex]}: ${val.toFixed(1)}%`
+        },
+        stroke: {
+          width: 2,
+          colors: [document.body.classList.contains("light") ? "#ffffff" : "#0f172a"]
+        }
+      });
+
+      chart.render();
+    }
+
+    function getWrongQuestions(){
+      return questions
+        .map((q, i) => ({ ...q, index: i, userAnswer: answers[i] }))
+        .filter(item => item.userAnswer !== item.answer);
+    }
+
+    function renderWrongQuestions(){
+      const container = document.getElementById("errorsSection");
+      if(!container) return;
+
+      const wrongQuestions = getWrongQuestions();
+
+      if(wrongQuestions.length === 0){
+        container.innerHTML = `
+          <div class="errorCard">
+            <h3>🎉 Nenhuma questão errada</h3>
+            <div class="errorQuestion">Parabéns! O aluno acertou todas as questões deste quiz.</div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = wrongQuestions.map(item => `
+        <div class="errorCard">
+          <h3>Questão ${item.index + 1} • ${esc(item.tag)}</h3>
+          <div class="errorQuestion">${esc(item.q)}</div>
+          <div class="errorInfo">
+            <div class="errorLine errorUser">
+              <strong>Resposta marcada pelo aluno:</strong>
+              ${letters[item.userAnswer]} ) ${esc(item.options[item.userAnswer])}
+            </div>
+            <div class="errorLine errorCorrect">
+              <strong>Alternativa correta:</strong>
+              ${letters[item.answer]} ) ${esc(item.options[item.answer])}
+            </div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderResult(){
+      stage = "result";
+      updateHeader();
+
+      const score = getScore();
+      const wrong = questions.length - score;
+      const percent = getPercent(score);
+      saveRanking(score);
+
+      screen.className = "screen";
+      screen.innerHTML = `
+        <div class="resultGrid">
+          <div class="panel">
+            <h2>Resultado final</h2>
+            <div class="score">${score} / ${questions.length}</div>
+
+            <p class="muted">
+              <b>Aluno:</b> ${esc(profile.aluno)}<br>
+              <b>Professor:</b> ${esc(profile.professor)}<br>
+              <b>Disciplina:</b> ${esc(profile.disciplina)}
+            </p>
+
+            <p class="muted" style="margin-top:12px;">
+              ${esc(getPerformanceMessage(score))}
+            </p>
+
+            <div class="summaryGrid">
+              <div class="summaryItem">
+                <strong>${score}</strong>
+                <span>Acertos</span>
+              </div>
+              <div class="summaryItem">
+                <strong>${wrong}</strong>
+                <span>Erros</span>
+              </div>
+              <div class="summaryItem">
+                <strong>${percent}%</strong>
+                <span>Aproveitamento</span>
+              </div>
+              <div class="summaryItem">
+                <strong>${questions.length}</strong>
+                <span>Total de questões</span>
+              </div>
+            </div>
+
+            <div class="rankTitle">Ranking local</div>
+            <ul class="rankList" id="rankList"></ul>
+
+            <div class="actions">
+              <button class="btn btnGhost" onclick="restart()">Voltar ao início</button>
+              <button class="btn btnPrimary" onclick="redo()">Refazer quiz</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>Desempenho</h2>
+            <div id="chart"></div>
+            <p class="muted" style="margin-top:10px;">
+              Visualização gráfica do desempenho do aluno no quiz.
+            </p>
+          </div>
+        </div>
+
+        <div class="errorsSection" id="errorsSection"></div>
+
+        <div class="footer">© 2026 • Quiz criado pelo professor Gilson — Relações Métricas.</div>
+      `;
+
+      renderRanking();
+      renderChart(score, wrong);
+      renderWrongQuestions();
+    }
+
+    function redo(){
+      current = 0;
+      answers = Array(questions.length).fill(null);
+      renderQuestion();
+    }
+
+    function restart(){
+      current = 0;
+      answers = Array(questions.length).fill(null);
+      renderIntro();
+    }
+
+    renderIntro();
+  </script>
+</body>
+</html>
